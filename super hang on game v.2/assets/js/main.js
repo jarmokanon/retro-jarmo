@@ -105,7 +105,16 @@ window.addEventListener(
         const speedPercent = speed / maxSpeed;
         const dx = dt * 2 * speedPercent;
 
+        startPosition = position;
+
         position = Util.increase(position, dt * speed, trackLength);
+
+
+        skyOffset = Util.increase(skyOffset, (skySpeed * playerSegment.curve * (position - startPosition)) / segmentLength, 1);
+        hillsOffset = Util.increase(hillsOffset, (hillsSpeed * playerSegment.curve * (position - startPosition)) / segmentLength, 1);
+        woodsOffset = Util.increase(woodsOffset, (woodsSpeed * playerSegment.curve * (position - startPosition)) / segmentLength, 1);
+
+
 
 
         if(keyLeft) {
@@ -144,7 +153,16 @@ window.addEventListener(
     let maxy = height;
     let x = 0;
     let dx = -(baseSegment.curve * basePercent);
+
+
     ctx.clearRect(0, 0, width, height);
+
+    Render.background(ctx, background, width, height, BACKGROUND.SKY, skyOffset, resolution * skySpeed * playerY);
+    Render.background(ctx, background, width, height, BACKGROUND.HILLS, hillsOffset, resolution * hillsSpeed * playerY);
+    Render.background(ctx, background, width, height, BACKGROUND.WOODS, woodsOffset, resolution * woodsSpeed * playerY);
+
+
+
     let n, i, segment, car, sprite, spriteScale, spriteX, spriteY;
     for (n = 0; n < drawDistance; n++) {
      segment = segments[(baseSegment.index + n) % segments.length];
