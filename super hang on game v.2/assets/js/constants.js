@@ -96,3 +96,6 @@ const KEY = {
    };
    
    SPRITES.SCALE = 0.1 * (1 / SPRITES.BIKE[6].w);
+
+
+   

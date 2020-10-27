@@ -118,19 +118,49 @@ window.addEventListener(
 
 
         if(keyLeft) {
-            playerX -= dx;
+
+            if(speed > 0) {
+                playerX -= dx;
+                if(hangTimer >= hangDelay) {
+                    hangTimer = 0;
+                    hang -= 2;
+                    hang = Util.limit(hang, -6, 0);
+                }else{
+                    hangTimer += dt * 1000;
+                }
+            }
         }else if(keyRight){
-            playerX += dx;
+            if (speed > 0) {
+                playerX = playerX + dx;
+                if (hangTimer >= hangDelay) {
+                    hangTimer = 0;
+                    hang += 2;
+                    hang = Util.limit(hang, 0, 6);
+                } else {
+                    hangTimer += dt * 1000;
+                }
+            }
+        }else {
+            if(hang !== 0) {
+                if(hangTimer >= hangDelay || hangTimer === 0) {
+                    hangTimer = 0;
+                    hang = hang < 0 ? hang + 2 : hang - 2;
+                }
+                hangTimer += dt * 1000;
+            }
         }
 
         playerX = playerX - dx * speedPercent * playerSegment.curve * centrifugal
 
-        if (keyFaster) {
-            speed = Util.accelerate(speed, accel, dt);
-        }else if (keySlower) {
+        if (keySlower) {
             speed = Util.accelerate(speed, breaking, dt);
+            brake = 14;
+        }else if (keyFaster) {
+            speed = Util.accelerate(speed, accel, dt);
+            brake = 0;
         }else {
             speed = Util.accelerate(speed, decel, dt);
+            brake = 0;
         }
 
         if((playerX < -1 || playerX > 1) && speed > offRoadLimit) {
@@ -139,6 +169,8 @@ window.addEventListener(
 
         playerX = Util.limit(playerX, -2, 2);
         speed = Util.limit(speed, 0, maxSpeed);
+        tire = Util.toInt(position / 500) % 2;
+        bikeSpriteSelector = 6 + tire + hang + brake;
 
 
 
@@ -182,4 +214,16 @@ window.addEventListener(
      maxy = segment.p1.screen.y;
     }
 
+
+    for(n=drawDistance-1; n>0; n--) {
+        segment = segments[(baseSegment.index + n) % segments.length];
+   
+
+    if (segment == playerSegment) {
+        Render.player(ctx, width, height, resolution, roadWidth, sprites, speed / maxSpeed, cameraDepth / playerZ, width / 2, height / 2 - ((cameraDepth / playerZ) * Util.interpolate(playerSegment.p1.camera.y, playerSegment.p2.camera.y, playerPercent) * height) / 2); // speed * (keyLeft ? -1 : keyRight ? 1 : 0), playerSegment.p2.world.y - playerSegment.p1.world.y
+      }
+    }
+
    };
+
+   
