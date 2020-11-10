@@ -224,6 +224,8 @@ window.addEventListener(
       }
     }
 
+    Render.speedometer(ctx, width, height, resolution, roadWidth, sprites, 0, 0.0005208333333333333, width, height);
+
    };
 
    
